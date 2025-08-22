@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Coach Interactive Tiles</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* The scene is the 3D container for our tiles */
+        .scene {
+            perspective: 1000px;
+        }
+        /* The tile itself, which will be transformed */
+        .tile {
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother transition */
+            cursor: pointer;
+        }
+        /* The class that gets toggled to flip the tile */
+        .tile.is-flipped {
+            transform: rotateY(180deg);
+        }
+        /* Common styles for both front and back faces of the tile */
+        .tile-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* For Safari */
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 1rem; /* 16px */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* The front face of the tile (visible by default) */
+        .tile-face-front {
+            background-color: #3b82f6; /* blue-500 */
+        }
+        /* The back face of the tile (hidden by default) */
+        .tile-face-back {
+            background-color: #f9fafb; /* gray-50 */
+            color: #1f2937; /* gray-800 */
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
+
+    <div class="text-center mb-8 sm:mb-12">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">AI Discovery Board</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2 text-base sm:text-lg">Click a tile to reveal a tool.</p>
+    </div>
+
+    <!-- 2x2 Grid Container -->
+    <div id="tile-grid" class="grid grid-cols-2 gap-4 sm:gap-6 w-full max-w-md aspect-square">
+        <!-- Tiles will be dynamically inserted here by JavaScript -->
+    </div>
+
+    <script>
+        // --- DATA ---
+        // The words for the back of each tile
+        const tileWords = ["ChatGPT", "Claude", "Gemini", "CoPilot"];
+
+        // --- LOGIC ---
+        // Wait for the document to be fully loaded before running the script
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('tile-grid');
+
+            // Check if the grid container exists
+            if (!grid) {
+                console.error("Grid container not found!");
+                return;
+            }
+
+            // Loop through each word and create a tile for it
+            tileWords.forEach(word => {
+                // 1. Create the main tile container element
+                const tile = document.createElement('div');
+                tile.className = 'tile relative';
+
+                // 2. Create the front face (blue)
+                const frontFace = document.createElement('div');
+                frontFace.className = 'tile-face tile-face-front';
+
+                // 3. Create the back face (with the word)
+                const backFace = document.createElement('div');
+                backFace.className = 'tile-face tile-face-back text-2xl sm:text-3xl font-semibold';
+                backFace.textContent = word;
+
+                // 4. Append front and back faces to the tile
+                tile.appendChild(frontFace);
+                tile.appendChild(backFace);
+
+                // 5. Add a click event listener to the tile to handle the flip
+                tile.addEventListener('click', () => {
+                    tile.classList.toggle('is-flipped');
+                });
+
+                // 6. Append the completed tile to the grid
+                grid.appendChild(tile);
+            });
+        });
+    </script>
+
+</body>
+</html>
